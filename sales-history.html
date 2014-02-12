@@ -1,0 +1,211 @@
+<!DOCTYPE html> 
+<html> 
+  <head> 
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Sparepart Factory</title>
+	<link rel="stylesheet" href="css/themes/sparepart-theme.min.css" />
+	<link rel="stylesheet" href="css/themes/jquery.mobile.icons.min.css" />
+	<link rel="stylesheet" href="css/jquery.mobile.structure-1.4.0.min.css" />
+        <link rel="stylesheet" href="css/style.css" />
+        
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+	<script src="js/jquery.mobile-1.4.0.min.js"></script>
+	
+	<script>
+	$(document).ready(function() {
+	var user_id = localStorage.userid;
+	$('#user_id').val(1);
+	$.ajax({
+               type : "GET",
+               dataType : "jsonp",
+               url : "http://www.yusupkurniawan.com/sparepart/api/orders/sales_history/format/json",
+			   data : {id : 1},
+               success: function(data){
+		      var i;
+			  $('.result_length').append(data.length);
+			  for(i=0;i<data.length;i++){
+				$('#history').append('<tr><td>'+data[i].created+'</td><td>'+data[i].company_from+'</td><td>Rp '+data[i].grandtotal+'</td><td><input name="checkbox" type="checkbox"></td></tr>');
+			  }
+			
+		      $("#history").trigger("create");
+               },
+	       error: function(xhr, textStatus, error){
+                       console.log(error);
+               }
+            });
+	});
+	</script>
+	
+	<script>
+	$(document).ready(function() {
+	$('.menu li:nth-child(5)').hide();
+		if(localStorage.userid == undefined){
+			$('.menu li:nth-child(2)').hide();
+			$('.menu li:nth-child(4)').hide();
+			$('.menu li:nth-child(6)').hide();
+			$('.menu li:nth-child(7)').hide();
+		}
+		else{
+			$('.menu li:nth-child(8)').hide();
+			if(localStorage.userlevel <= '2')
+				$('.menu li:nth-child(5)').show();
+			$('<li><a href="logout.html" data-ajax="false"><img src="images/icon_login.png"/><br/>Logout</a></li>').insertBefore('.menu .clear');
+			$('.menu').trigger('create');
+		}
+	$('.menu ul').trigger("create");
+	});
+	</script>
+ </head> 
+ <body> 
+    <div data-role="page" data-theme="a"> 
+        <div data-role="header" class="header">
+            <div class="my-header-grid ui-grid-b">
+                <div class="ui-block-a">
+                    <a href="#" class="menubtn ui-btn-inline" data-role="none">MENU</a>
+                </div>
+                <div class="ui-block-b">
+                    <h1><span><a href="index2.html" data-ajax="false" class="logo"></a></span></h1>
+                </div>
+                <div class="ui-block-c">
+                    <a href="#" class="searchbtn ui-btn-inline right" data-role="none">SEARCH</a>
+                </div>
+            </div><!-- /grid-b -->
+            
+	    <div class="menu">
+	    	<ul>
+	            <li><a href="index2.html" data-ajax="false"><img src="images/icon_home.png"/><br/>Home</a></li>
+	            <li><a href="profile.html" data-ajax="false"><img src="images/icon_profile.png"/><br/>Profile</a></li>
+	            <li><a href="catalog.html" data-ajax="false"><img src="images/icon_catalog.png"/><br/>Catalog Product</a></li>
+	            <li><a href="purchase.html" data-ajax="false"><img src="images/icon_purchase.png"/><br/>Purchase Order</a></li>
+	            <li><a href="input-new-store.html" data-ajax="false"><img src="images/icon_location.png"/><br/>Input New Store</a></li>
+                    <li><a href="request.html" data-ajax="false"><img src="images/icon_request.png"/><br/>Request Sparepart</a></li>
+                    <li><a href="product-knowledge.html" data-ajax="false"><img src="images/icon_product-knowledge.png"/><br/>Product Knowledge</a></li>
+	            <li><a href="login.html" data-ajax="false"><img src="images/icon_login.png"/><br/>Login</a></li>
+                    <div class="clear"></div>
+        	</ul>
+                <button class="ui-btn ui-btn-c ui-icon-carat-u ui-btn-icon-notext ui-btn-icon-top" id="close-menu"></button>
+	    </div>
+	    
+	    <div class="search-box" >
+	    	<form action="#">
+	    	    <input type="search" name="search" id="search" value="" placeholder="Search..." class="ui-corner-all" />
+	    	    <input type="hidden" value="Go" />
+	    	</form>
+	    	<div class="clear"></div>
+	    </div>
+            <div class="clear"></div>
+        </div>
+	
+        <div data-role="content">
+            <h2>SALES HISTORY</h2>
+	    <form id="sales_search">
+		<input type="hidden" name="id" id="user_id">
+		<table data-role="none">
+		  <tr>
+		    <td class="center">From </td>
+		    <td><input type="text" name="from" data-role="date" data-inline="false" id="datepicker" placeholder="Date"></td>
+		    <td class="center">To </td>
+		    <td><input type="text" name="to" data-role="date" data-inline="false" id="datepicker2" placeholder="Date"></td>
+		  </tr>
+		</table>
+		<div class="ui-grid-b">
+		    <div class="ui-block-a"></div>
+		    <div class="ui-block-b"><input type="submit" value="SEARCH" id="sub-reg"></div>
+		    <div class="ui-block-c"></div>
+		</div>
+
+	    </form>
+	    <br/>
+	    <hr/>
+	    <h3 class="result_length">Result: </h3>
+	    <div class="clear"></div>
+
+	    <form>
+	    <table class="t_sparepart ui-responsive table-stroke" id="history">
+		<thead>
+			<tr>
+			    <th>Date</th>
+			    <th>Nama Toko</th>
+			    <th>Revenue</th>
+			    <th>Sent</th>
+			</tr>
+		</thead>
+		<tbody>
+		  </tbody>
+	    </table>
+	    </form>
+            <div class="clear"></div>
+        </div>   
+        <div data-role="footer">
+            <h6>&copy; 2014 PT Mascot International.</h6>
+        </div> 
+    </div>
+    
+    <script>
+        $('.menu, .search-box').hide();   
+        $('.menubtn').click(function(){	
+            $(this).toggleClass('active'); 	
+            $('.menu').toggle();        			
+            $('.search-box').hide();  		
+            $('.menubtn').removeClass('active'); 
+        });
+        
+        $('.searchbtn').click(function(){	
+            $(this).toggleClass('active'); 	
+            $('.search-box').toggle();        			
+            $('.menu').hide();  		
+            $('.searchbtn').removeClass('active'); 
+        });
+        
+        $('#close-menu').click(function(){      			
+            $('.menu').hide();  		
+            $('.menubtn').removeClass('active'); 
+        });
+    </script>
+    
+    <script src="js/jquery.tablesorter.js"></script>
+    <script>
+        $(document).ready(function(){
+	    $("#history").tablesorter();
+        });
+    </script>
+    
+    
+  <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
+  <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+  <script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+    <script>
+      $(function() {
+	$( "#datepicker,#datepicker2" ).datepicker({"dateFormat": "yy/mm/dd"});
+      });
+	  
+	$(document).ready(function() {
+	$('#sub-reg').click( function(e) {
+		e.preventDefault();
+		$('.result_length').text('Result :');
+		$('#history tbody').empty();
+		$.ajax({
+				type: "POST",
+				dataType: "jsonp",
+				url: "http://www.yusupkurniawan.com/sparepart/api/orders/sales_history/format/json",
+				data: $('#sales_search').serialize(),
+				success: function(data){
+		      var i;
+			  $('.result_length').append(data.length);
+			  for(i=0;i<data.length;i++){
+				$('#history').append('<tr><td>'+data[i].created+'</td><td>'+data[i].company_from+'</td><td>Rp '+data[i].grandtotal+'</td><td><input name="checkbox" type="checkbox"></td></tr>');
+			  }
+			
+		      $("#history").trigger("create");
+               },
+				error: function(xhr, textStatus, error){
+                    console.log(error);
+               }
+			});
+		});
+	});
+    </script>
+    
+    </body> 
+</html>

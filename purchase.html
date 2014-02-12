@@ -1,0 +1,293 @@
+<!DOCTYPE html> 
+<html> 
+  <head> 
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Sparepart Factory</title>
+	<link rel="stylesheet" href="css/themes/sparepart-theme.min.css" />
+	<link rel="stylesheet" href="css/themes/jquery.mobile.icons.min.css" />
+	<link rel="stylesheet" href="css/jquery.mobile.structure-1.4.0.min.css" />
+        <link rel="stylesheet" href="css/style.css" />
+        
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+	<script src="js/jquery.mobile-1.4.0.min.js"></script>
+	<script>
+	$(document).ready(function() {
+	$('.menu li:nth-child(5)').hide();
+		if(localStorage.userid == undefined){
+			$('.menu li:nth-child(2)').hide();
+			$('.menu li:nth-child(4)').hide();
+			$('.menu li:nth-child(6)').hide();
+			$('.menu li:nth-child(7)').hide();
+		}
+		else{
+			$('.menu li:nth-child(8)').hide();
+			if(localStorage.userlevel <= '2')
+				$('.menu li:nth-child(5)').show();
+			$('<li><a href="logout.html" data-ajax="false"><img src="images/icon_login.png"/><br/>Logout</a></li>').insertBefore('.menu .clear');
+			$('.menu').trigger('create');
+		}
+	$('.menu ul').trigger("create");
+	});
+	</script>
+	<script>
+	function plus(n){
+		var now = parseInt($('#xqty'+n).val())+1;
+		$('#xqty'+n).val(now);
+	}
+	
+	function min(n){
+		var now = parseInt($('#xqty'+n).val())-1;
+		if(now > 0){
+			$('#xqty'+n).val(now);
+		}
+	}
+	
+	var arr_cart = new Array();
+	var arr_i = 0;
+	if (localStorage.cart != undefined){
+		arr_cart = $.parseJSON(localStorage.cart);
+		arr_i = arr_cart.length;
+	}
+	var userid = localStorage.userid;
+	
+	function add_to_cart(prodid, prodname, pic, price, n , code){
+		alert('tes');
+		var now = 0;
+		$.each(arr_cart, function(i) {
+		if(arr_cart[i] != null ){
+			if(prodid == arr_cart[i][0] ){
+			now = arr_cart[i][4];
+			arr_cart[i][4] = (now+parseInt($('#xqty'+n).val()))
+			}
+		}
+		});
+		
+		if(now == 0){
+		 arr_cart[arr_i] = new Array();
+		 arr_cart[arr_i][0] = prodid;
+		 arr_cart[arr_i][1] = code;
+		 arr_cart[arr_i][2] = prodname;
+		 arr_cart[arr_i][3] = pic;
+		 arr_cart[arr_i][4] = parseInt($('#xqty'+n).val());
+		 arr_cart[arr_i][5] = price;
+		 arr_i++;
+		 }
+		 localStorage.cart = JSON.stringify(arr_cart);
+		 alert('Item '+prodid+' ditambahkan di cart');
+	}
+        </script>
+	<script>		  
+        $(document).ready(function() {
+            $.ajax({
+               type : "GET",
+               dataType : "jsonp",
+               url : "http://www.yusupkurniawan.com/sparepart/api/orders/merk/format/json",
+               success: function(data){
+				var i;
+					for(i=0;i<data.length;i++){
+						$('#merk').append('<option value="'+data[i].name+'">'+data[i].name+'</option>');
+					}
+		      $("#merk").trigger("create");
+               },
+	       error: function(xhr, textStatus, error){
+                    console.log(error);
+               }
+            });
+	    
+	    //alert(localStorage.brandcode);
+        });
+        </script>
+ </head> 
+ <body> 
+    <div data-role="page" data-theme="a"> 
+        <div data-role="header" class="header">
+            <div class="my-header-grid ui-grid-b">
+                <div class="ui-block-a">
+                    <a href="#" class="menubtn ui-btn-inline" data-role="none">MENU</a>
+                </div>
+                <div class="ui-block-b">
+                    <h1><span><a href="index2.html" data-ajax="false" class="logo"></a></span></h1>
+                </div>
+                <div class="ui-block-c">
+                    <a href="#" class="searchbtn ui-btn-inline right" data-role="none">SEARCH</a>
+                </div>
+            </div><!-- /grid-b -->
+            
+	    <div class="menu">
+	    	<ul>
+	            <li><a href="index2.html" data-ajax="false"><img src="images/icon_home.png"/><br/>Home</a></li>
+	            <li><a href="profile.html" data-ajax="false"><img src="images/icon_profile.png"/><br/>Profile</a></li>
+	            <li><a href="catalog.html" data-ajax="false"><img src="images/icon_catalog.png"/><br/>Catalog Product</a></li>
+	            <li><a href="purchase.html" data-ajax="false"><img src="images/icon_purchase.png"/><br/>Purchase Order</a></li>
+	            <li><a href="input-new-store.html" data-ajax="false"><img src="images/icon_location.png"/><br/>Input New Store</a></li>
+                    <li><a href="request.html" data-ajax="false"><img src="images/icon_request.png"/><br/>Request Sparepart</a></li>
+                    <li><a href="product-knowledge.html" data-ajax="false"><img src="images/icon_product-knowledge.png"/><br/>Product Knowledge</a></li>
+	            <li><a href="login.html" data-ajax="false"><img src="images/icon_login.png"/><br/>Login</a></li>
+                    <div class="clear"></div>
+        	</ul>
+                <button class="ui-btn ui-btn-c ui-icon-carat-u ui-btn-icon-notext ui-btn-icon-top" id="close-menu"></button>
+	    </div>
+	    
+	    <div class="search-box" >
+	    	<form action="#">
+	    	    <input type="search" name="search" id="search" value="" placeholder="Search..." class="ui-corner-all" />
+	    	    <input type="hidden" value="Go" />
+	    	</form>
+	    	<div class="clear"></div>
+	    </div>
+            <div class="clear"></div>
+        </div>
+	
+        <div data-role="content" id="content">
+            
+            <h2>CHECK PURCHASE ORDER</h2>
+
+            <form action="#" method="post" class="ui-nodisc-icon ui-alt-icon" id="form-purch">
+                <input type="search" name="txt" id="search" value="" placeholder="Search product...">
+                
+		<select name="brand" id="brand" data-theme="b">
+		    <option value="">Pilih Brand</option>
+		    <option value="HIK">HEIKER</option>
+			<option value="BRK">BIRKENS</option>
+			<option value="IKYBI">IKYBI</option>
+			<option value="STEC">STECKER</option>
+		</select>
+		
+		<select name="cat" id="cat" data-theme="b">
+		    <option value="">Pilih Kategori</option>
+		</select>
+		
+		<select name="merk" id="merk" data-theme="b">
+		    <option value="">Pilih Merk Mobil</option>		    
+		</select>
+                
+                <div class="ui-grid-b">
+		    <div class="ui-block-a"></div>
+		    <div class="ui-block-b"><input type="submit" value="SEARCH" id="sub-purch"></div>
+		    <div class="ui-block-c"></div>
+		</div>
+	    </form>
+	    <br/>
+	    <hr/>
+	    <h3>Result: <span class="total"></span></h3>
+	    <div class="clear"></div>
+
+	    <form>
+		<table class="t_sparepart ui-responsive table-stroke">
+                    <thead><tr><th></th><th>CODE</th><th>OEM NUMBER</th><th>JENIS MOBIL</th><th>PRICE</th><th></th></tr></thead>
+                    <tbody>
+					</tbody>
+                </table>
+	    </form>
+	    <div id="list"></div>
+        </div>   
+        <div data-role="footer">
+            <h6>&copy; 2014 PT Mascot International.</h6>
+        </div> 
+    </div>
+    
+    <script>
+        $('.menu, .search-box').hide();   
+        $('.menubtn').click(function(){	
+            $(this).toggleClass('active'); 	
+            $('.menu').toggle();        			
+            $('.search-box').hide();  		
+            $('.menubtn').removeClass('active'); 
+        });
+        
+        $('.searchbtn').click(function(){	
+            $(this).toggleClass('active'); 	
+            $('.search-box').toggle();        			
+            $('.menu').hide();  		
+            $('.searchbtn').removeClass('active'); 
+        });
+        
+        $('#close-menu').click(function(){      			
+            $('.menu').hide();  		
+            $('.menubtn').removeClass('active'); 
+        });
+		
+		document.getElementById("search").onkeypress = function() {
+		if ($('.text').val().length > 1 ){
+		$('.search-result ul').empty();
+		$.ajax({
+				type: "GET",
+				dataType: "jsonp",
+				url: "http://www.yusupkurniawan.com/sparepart/api/orders/search/format/json",
+				data: $('#search').serialize(),
+				success: function(data){
+                    var i;
+					for(i=0; i<data.length; i++){
+						$('.search-result ul').append('<li><a href="javascript:detail_select(\''+data[i].cat_code+'\', \''+data[i].brand_code+'\');">'+data[i].item_name+' - '+data[i].item_number+'</a></li>');
+					}
+				$('.search-result').trigger("create");
+               },
+				error: function(xhr, textStatus, error){
+                    console.log(error);
+               }
+			});
+			}
+		}
+		
+		document.getElementById("brand").onchange = function() {
+        var prov = $('#brand option:selected').val();
+		$('#cat').empty();
+		$.ajax({
+				type: "GET",
+				dataType: "jsonp",
+				url: "http://www.yusupkurniawan.com/sparepart/api/orders/cat_by_brand/format/json",
+				data: {brand : prov},
+				success: function(data){
+                    var i;
+					for(i=0;i<data.length;i++){
+						$('#cat').append('<option value="'+data[i].cat+'">'+data[i].name+'</option>');
+					}
+		      $("#cat").trigger("create");
+               },
+				error: function(xhr, textStatus, error){
+                    console.log(error);
+               }
+			});
+		}
+		
+	$(document).ready(function() {
+	
+	$('#sub-purch').click( function(e) {
+		$('#sub-purch').text('Loading ...');
+		$('.table-stroke tbody').empty();
+		$('.ui-popup-container').empty();
+		$('#list').empty();
+		$('.total').text('0');
+		e.preventDefault();
+		$.ajax({
+				type: "POST",
+				dataType: "jsonp",
+				url: "http://www.yusupkurniawan.com/sparepart/api/orders/purchase/format/json",
+				data: $('#form-purch').serialize(),
+				success: function(data){
+					$('.total').text(data.length);
+                    $('#sub-purch').text('Search');
+				for(i=0; i<data.length; i++){
+					if(localStorage.userid == undefined){
+						var price = '<td colspan="2"><a href="login.html" class="ui-btn ui-btn-a ui-corner-all ui-btn-inline ui-mini" data-ajax="false">Login to buy</a></td>';
+					} else{
+						var price = '<td>Rp'+data.prod[data.merk[i][j].id].price+'</td><td><a href="#purchase'+data.merk[i][j].id+'" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-btn-a ui-corner-all ui-btn-inline ui-mini">BUY</a></td>';
+					}
+					$('.table-stroke tbody').append('<tr><td><a href="#image'+i+'" data-rel="popup" class="ui-btn ui-btn-a ui-icon-camera ui-btn-icon-notext ui-corner-all" data-transition="pop" data-position-to="window">View Image</a></td><td>'+data[i].code+'</td><td>'+data[i].uom+'</td>'+price+'</tr>');
+					
+					$('#list').append('<div data-role="popup" id="image'+i+'" data-overlay-theme="c"><a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a><h5>'+data[i].name+'</h5><img src="'+data[i].pict+'" width="100%"/></div><div data-role="popup" id="purchase'+i+'" data-theme="a" data-overlay-theme="b" class="ui-content"><a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a><h3 class="center">Purchase Product?</h3><span class="left"><a onclick="min('+i+')" href="#" class="ui-btn ui-btn-inline ui-corner-all ui-icon-minus ui-btn-icon-notext ui-mini">-</a></span><span class="left inputqty"><input type="text" name="" id="xqty'+i+'" placeholder="1" value="1" style="width: 70px;display: inline-block;"></span><span class="left"><a href="#" onclick="plus('+i+')" class="ui-btn ui-btn-inline ui-corner-all ui-icon-plus ui-btn-icon-notext ui-mini">+</a></span><span class="left"><button onclick="add_to_cart('+data[i].id+',\''+data[i].name+'\',\''+data[i].pict+'\','+data[i].price+','+i+',\''+data[i].code+'\')" class="ui-shadow ui-btn ui-corner-all ui-btn-inline ui-mini">BUY</button></span><div class="clear"></div></div>');
+					}
+				$('#content').trigger('create');
+               },
+				error: function(xhr, textStatus, error){
+                    console.log(error);
+					$('#sub-purch').text('Search');
+               }
+			});
+		});
+	});
+    </script>
+    
+    </body> 
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html> 
+<html> 
+  <head> 
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Sparepart Factory</title>
+	<link rel="stylesheet" href="css/themes/sparepart-theme.min.css" />
+	<link rel="stylesheet" href="css/themes/jquery.mobile.icons.min.css" />
+	<link rel="stylesheet" href="css/jquery.mobile.structure-1.4.0.min.css" />
+        <link rel="stylesheet" href="css/style.css" />
+        
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+	<script src="js/jquery.mobile-1.4.0.min.js"></script>
+	<script>
+	$(document).ready(function() {
+	$('.menu li:nth-child(5)').hide();
+		if(localStorage.userid == undefined){
+			$('.menu li:nth-child(2)').hide();
+			$('.menu li:nth-child(4)').hide();
+			$('.menu li:nth-child(6)').hide();
+			$('.menu li:nth-child(7)').hide();
+		}
+		else{
+			$('.menu li:nth-child(8)').hide();
+			if(localStorage.userlevel <= '2')
+				$('.menu li:nth-child(5)').show();
+			$('<li><a href="logout.html" data-ajax="false"><img src="images/icon_login.png"/><br/>Logout</a></li>').insertBefore('.menu .clear');
+			$('.menu').trigger('create');
+		}
+	$('.menu ul').trigger("create");
+	});
+	</script>
+ </head> 
+ <body> 
+    <div data-role="page" data-theme="a"> 
+      
+        <div data-role="content" id="landingpage">
+            
+            <form action="#" id="loginform">
+                <label for="txt-un">Username</label>
+                <input type="text" name="user" id="txt-un" value="">
+                <label for="password">Password</label>
+                <input type="password" name="pass" id="password" value="" autocomplete="off">
+                <div class="ui-grid-b">
+		    <div class="ui-block-a"></div>
+		    <div class="ui-block-b"><input type="submit" value="LOGIN" id="sub-login"></div>
+		    <div class="ui-block-c"></div>
+		
+		    <div class="ui-block-a"></div>
+		    <div class="ui-block-b"><a onclick="guest()" class="ui-btn ui-btn-e ui-corner-all">LOGIN AS GUEST</a></div>
+		    <div class="ui-block-c"></div>
+		</div>
+            </form>
+            
+            <p class="center">
+                <a href="forgot.html" data-transition="slidedown" data-ajax="false">Forgot Password?</a>
+            </p>
+            <p class="center">
+                <a href="signup.html" data-transition="slidedown" data-ajax="false">Sign Up</a>
+            </p>
+            
+        </div>   
+        <div data-role="footer">
+            <h6>&copy; 2014 PT Mascot International.</h6>
+        </div> 
+    </div>
+    
+    <script>
+        $('.menu, .search-box').hide();   
+        $('.menubtn').click(function(){	
+            $(this).toggleClass('active'); 	
+            $('.menu').toggle();        			
+            $('.search-box').hide();  		
+            $('.menubtn').removeClass('active'); 
+        });
+        
+        $('.searchbtn').click(function(){	
+            $(this).toggleClass('active'); 	
+            $('.search-box').toggle();        			
+            $('.menu').hide();  		
+            $('.searchbtn').removeClass('active'); 
+        });
+    </script>
+    
+    <script src="js/responsiveslides.min.js"></script>
+    <script>
+        $(function() {
+          $(".rslides").responsiveSlides();
+        });
+    </script>
+    <script>
+	function guest(){
+		window.location=('index2.html');
+	}
+	
+	$(document).ready(function() {
+	$('#sub-login').click( function(e) {
+		e.preventDefault();
+		$('#sub_login').attr('disabled', 'disabled');
+		$.ajax({
+				type: "POST",
+				dataType: "jsonp",
+				url: "http://www.yusupkurniawan.com/sparepart/api/orders/cek_login/format/json",
+				data: $('#loginform').serialize(),
+				success: function(data){
+                    if(data.entity_id != null){
+                    localStorage.userid = data.entity_id;
+					localStorage.userlevel = data.group_entity_id;
+					localStorage.username = data.full_name;
+					window.alert('Selamat datang '+data.full_name+'')
+					window.location=('index2.html');
+				} else {
+					alert(data);
+				}
+               },
+				error: function(xhr, textStatus, error){
+                    alert(error);
+               }
+			});
+		});
+	});
+	</script>
+    </body> 
+</html>
